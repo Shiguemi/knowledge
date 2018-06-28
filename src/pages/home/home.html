@@ -8,17 +8,17 @@
 
 <ion-content padding>
   <ion-item>
-      <ion-label floating>Type to search</ion-label>
-      <ion-input #inputSearch type="text" value="" (keyup)='mySearch(inputSearch.value)' ng-model-options="{ debounce: 500 }"></ion-input>    
+      <ion-label floating>{{ searchTerm }}</ion-label>
+      <ion-input #inputSearch type="text" (keyup)="mySearch(inputSearch.value)"></ion-input>
   </ion-item>
   <ion-list>
-    <ion-item *ngFor="let item of results">
+    <ion-item *ngFor="let item of results" (pan)="userPanDebounce($event, item.result.name, 500)">
       <ion-thumbnail item-start>
-        <img [src]="item.result?.image?.contentUrl" (click)='mySearch(item.result.name)'>
+        <img [src]="item.result?.image?.contentUrl">
       </ion-thumbnail>
       <h2>{{item.result.name}}</h2>
       <p>{{item.result.description}}</p>
-      <button ion-button clear item-end>View</button>
+      <button (click)='mySearchNew(item.result.name)' ion-button round item-end>Next</button>
     </ion-item>
   </ion-list>
 </ion-content>

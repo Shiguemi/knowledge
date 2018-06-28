@@ -16,21 +16,13 @@ export class KnowledgeProvider {
   }
 
   public search(term: string): Observable<any> {
-    var params = new HttpParams()
-      .set('query', term)
-      .set('limit', '10')
-      .set('indent', 'true')
-      .set('key', 'AIzaSyB8Ycbavt2DwYtAr5ncWIzeN6hxAJCrAmw');
-    return this.searchAll(params);
+    return this.searchAll(
+      this.buildHttpParams().set('query', term));
   }
 
   public searchId(id: string): Observable<any> {
-    var params = new HttpParams()
-      .set('ids', id)
-      .set('limit', '10')
-      .set('indent', 'true')
-      .set('key', 'AIzaSyB8Ycbavt2DwYtAr5ncWIzeN6hxAJCrAmw');
-    return this.searchAll(params);
+    return this.searchAll(
+      this.buildHttpParams().set('ids', id));
   }
 
   public searchAll(params: HttpParams): Observable<any> {
@@ -42,4 +34,10 @@ export class KnowledgeProvider {
     return this.http.get(service_url, httpOptions);
   }
 
+  public buildHttpParams(): HttpParams {
+    return new HttpParams()
+    .set('limit', '10')
+    .set('indent', 'true')
+    .set('key', 'AIzaSyB8Ycbavt2DwYtAr5ncWIzeN6hxAJCrAmw');
+}
 }
