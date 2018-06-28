@@ -15,25 +15,25 @@ export class KnowledgeProvider {
     console.log('Hello KnowledgeProvider Provider');
   }
 
-  public search(term: string): Observable<JSON> {
+  public search(term: string): Observable<any> {
     var params = new HttpParams()
       .set('query', term)
       .set('limit', '10')
       .set('indent', 'true')
-      .set('key', '<API_KEY>');
+      .set('key', 'AIzaSyB8Ycbavt2DwYtAr5ncWIzeN6hxAJCrAmw');
     return this.searchAll(params);
   }
 
-  public searchId(id: string): Observable<JSON> {
+  public searchId(id: string): Observable<any> {
     var params = new HttpParams()
       .set('ids', id)
       .set('limit', '10')
       .set('indent', 'true')
-      .set('key', '<API_KEY>');
+      .set('key', 'AIzaSyB8Ycbavt2DwYtAr5ncWIzeN6hxAJCrAmw');
     return this.searchAll(params);
   }
 
-  public searchAll(params: HttpParams): Observable<JSON> {
+  public searchAll(params: HttpParams): Observable<any> {
     var service_url = 'https://kgsearch.googleapis.com/v1/entities:search';
     var httpOptions = {
       headers: new HttpHeaders({'Content-type': 'application/json'}),
