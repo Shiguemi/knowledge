@@ -64,10 +64,10 @@ export class HomePage {
   }
 
   userPan(event, term, delay) {
-    if (event.additionalEvent == "panright") {
+    if (event.additionalEvent == "panleft") {
       this.navCtrl.push(HomePage, {'term': term });
     }
-    if (event.additionalEvent == "panleft") {
+    if (event.additionalEvent == "panright") {
       if (this.navCtrl.canGoBack()) {
         this.navCtrl.pop();
       } else if (!this.alertIsShown) {
