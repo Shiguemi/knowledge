@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, SystemJsNgModuleLoaderConfig } from '@angular/core';
 import { NavController } from 'ionic-angular';
 import { KnowledgeProvider } from '../../providers/knowledge/knowledge';
 import { Observable } from 'rxjs/Observable';
@@ -12,9 +12,10 @@ export class HomePage {
 
   title: string;
   results: JSON;
+  myResults: Array<any> = [{}];
 
   constructor(public navCtrl: NavController, private provider: KnowledgeProvider) {
-    this.title = "Search using Google Knowledge Graph";
+    this.title = "Google's Knowledge Graph";
   }
 
   mySearch(term:string): void {
@@ -30,10 +31,14 @@ export class HomePage {
     observable.subscribe((response) => {
       console.log(response);
       this.results = response['itemListElement'];
-      var items = new Array(this.results);
-      items.forEach(element => {
-        var image = element['image'];
-        console.log(image);
+      var resultArray = response['itemListElement'];
+      resultArray.forEach(element => {
+        var result = element['result'];
+        console.log(result);
+        if (!result['image']) {
+          result['image'] = {};
+          result['image']['contentUrl'] = "assets/imgs/logo.png";
+        }
       });
     });
   }
