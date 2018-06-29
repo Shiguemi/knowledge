@@ -8,6 +8,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
 import { KnowledgeProvider } from '../providers/knowledge/knowledge';
+import { NativePageTransitions } from '@ionic-native/native-page-transitions';
 
 @NgModule({
   declarations: [
@@ -17,6 +18,7 @@ import { KnowledgeProvider } from '../providers/knowledge/knowledge';
   imports: [
     BrowserModule,
     HttpClientModule,
+    //NativePageTransitions,
     IonicModule.forRoot(MyApp)
   ],
   bootstrap: [IonicApp],

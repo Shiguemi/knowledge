@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { NavController, NavParams, AlertController, Alert } from 'ionic-angular';
 import { KnowledgeProvider } from '../../providers/knowledge/knowledge';
 import { Observable } from 'rxjs/Observable';
+// import { NativePageTransitions, NativeTransitionOptions } from '@ionic-native/native-page-transitions';
 
 @Component({
   selector: 'page-home',
@@ -21,6 +22,7 @@ export class HomePage {
       private provider: KnowledgeProvider, 
       private navParams: NavParams,
       private alertCtrl: AlertController) {
+      // private nativePageTransitions: NativePageTransitions) {
     this.title = "Google's Knowledge Graph";
     this.panIsRunning = false;
     this.alertIsShown = false;
@@ -63,6 +65,19 @@ export class HomePage {
     });
   }
 
+  userSwipe(event, term) {
+    console.log("event: " + event.offsetDirection);
+    console.log("term: " + term);
+    if (event.offsetDirection == 2) {
+      this.navCtrl.push(HomePage, {'term': term });
+    }
+    if (event.offsetDirection == 4) {
+      if (this.navCtrl.canGoBack()) {
+        this.navCtrl.pop();
+      }
+    }
+  }
+
   userPan(event, term, delay) {
     if (event.additionalEvent == "panleft") {
       this.navCtrl.push(HomePage, {'term': term });
@@ -102,5 +117,24 @@ export class HomePage {
   ionViewDidEnter() {
     this.panIsRunning = false;
   }
+
+  // ionViewWillLeave() {
+
+  //   let options: NativeTransitionOptions = {
+  //      direction: 'left',
+  //      duration: 500,
+  //      slowdownfactor: 3,
+  //      slidePixels: 20,
+  //      iosdelay: 100,
+  //      androiddelay: 150,
+  //      fixedPixelsTop: 0,
+  //      fixedPixelsBottom: 60
+  //     };
+   
+  //   this.nativePageTransitions.slide(options);
+  //     //.then(onSuccess)
+  //     //.catch(onError);
+   
+  //  }
 
 }
