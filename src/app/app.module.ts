@@ -9,28 +9,31 @@ import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
 import { KnowledgeProvider } from '../providers/knowledge/knowledge';
 import { NativePageTransitions } from '@ionic-native/native-page-transitions';
+import { FullDescription } from '../pages/fulldescription/fulldescription';
 
 @NgModule({
   declarations: [
     MyApp,
-    HomePage
+    HomePage,
+    FullDescription
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
-    //NativePageTransitions,
     IonicModule.forRoot(MyApp)
   ],
   bootstrap: [IonicApp],
   entryComponents: [
     MyApp,
-    HomePage
+    HomePage,
+    FullDescription
   ],
   providers: [
     StatusBar,
     SplashScreen,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
-    KnowledgeProvider
+    KnowledgeProvider,
+    NativePageTransitions
   ]
 })
 export class AppModule {}

@@ -1,0 +1,15 @@
+<ion-content>
+    <ion-card>
+        <img src="{{imageUrl}}"/>
+        <ion-card-content>
+            <ion-card-title>
+            {{ title }}
+            </ion-card-title>
+            <p>
+                {{ detailedDescription }}
+            </p>
+            <a href="{{ wikipediaUrl }}">Wikipedia</a>
+            <button ion-button (click)="close()" full>Close</button>
+        </ion-card-content>
+    </ion-card>            
+</ion-content>

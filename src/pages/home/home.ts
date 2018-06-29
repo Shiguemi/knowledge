@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
-import { NavController, NavParams, AlertController, Alert } from 'ionic-angular';
+import { NavController, NavParams } from 'ionic-angular';
 import { KnowledgeProvider } from '../../providers/knowledge/knowledge';
 import { Observable } from 'rxjs/Observable';
-// import { NativePageTransitions, NativeTransitionOptions } from '@ionic-native/native-page-transitions';
+import { NativePageTransitions, NativeTransitionOptions } from '@ionic-native/native-page-transitions';
+import { FullDescription } from '../fulldescription/fulldescription';
 
 @Component({
   selector: 'page-home',
@@ -17,11 +18,12 @@ export class HomePage {
   searchTerm: string;
   panIsRunning: boolean;
   alertIsShown: boolean;
+  transitionDirection: string;
 
   constructor(public navCtrl: NavController, 
       private provider: KnowledgeProvider, 
       private navParams: NavParams,
-      private alertCtrl: AlertController) {
+      private nativePageTransitions: NativePageTransitions) {
       // private nativePageTransitions: NativePageTransitions) {
     this.title = "Google's Knowledge Graph";
     this.panIsRunning = false;
@@ -32,7 +34,7 @@ export class HomePage {
     if (this.searchTerm && this.searchTerm != '') {
       this.mySubscribe(this.provider.search(this.searchTerm));
     } else {
-      this.searchTerm = "Type to search...";
+      this.searchTerm = "Type to search... swipe to next search...";
     }
   }
 
@@ -47,6 +49,11 @@ export class HomePage {
   mySearchId(id:string): void {
     id = id.split(':')[1]
     this.mySubscribe(this.provider.searchId(id))
+  }
+
+  fullDescription(id: string): void {
+    id = id.split(':')[1]
+    this.navCtrl.push(FullDescription, {'id': id});
   }
 
   mySubscribe(observable: Observable<JSON>) {
@@ -70,47 +77,13 @@ export class HomePage {
     console.log("term: " + term);
     if (event.offsetDirection == 2) {
       this.navCtrl.push(HomePage, {'term': term });
+      this.transitionDirection = 'left';
     }
     if (event.offsetDirection == 4) {
+      this.transitionDirection = 'right';
       if (this.navCtrl.canGoBack()) {
         this.navCtrl.pop();
       }
-    }
-  }
-
-  userPan(event, term, delay) {
-    if (event.additionalEvent == "panleft") {
-      this.navCtrl.push(HomePage, {'term': term });
-    }
-    if (event.additionalEvent == "panright") {
-      if (this.navCtrl.canGoBack()) {
-        this.navCtrl.pop();
-      } else if (!this.alertIsShown) {
-        this.alertIsShown = true;
-        const alert = this.alertCtrl.create({
-          title: 'Sorry!',
-          subTitle: 'You are at the beginning of this search.',
-          buttons: ['OK']
-        });
-        setTimeout(function() {
-          this.alertIsShown = false;
-          this.panIsRunning = false;
-        }, delay);
-        alert.present();
-      }
-    }
-  }
-
-  userPanDebounce(event, term, delay) {
-    console.log("event: " + event.additionalEvent);
-    console.log("term: " + term);
-    console.log("running: " + this.panIsRunning);
-    if (!this.panIsRunning) {
-      this.userPan(event, term, delay);
-      this.panIsRunning = true;
-      setTimeout(function() {
-        this.panIsRunning = false;
-      }, delay);
     }
   }
 
@@ -118,23 +91,23 @@ export class HomePage {
     this.panIsRunning = false;
   }
 
-  // ionViewWillLeave() {
+  ionViewWillLeave() {
 
-  //   let options: NativeTransitionOptions = {
-  //      direction: 'left',
-  //      duration: 500,
-  //      slowdownfactor: 3,
-  //      slidePixels: 20,
-  //      iosdelay: 100,
-  //      androiddelay: 150,
-  //      fixedPixelsTop: 0,
-  //      fixedPixelsBottom: 60
-  //     };
+    let options: NativeTransitionOptions = {
+       direction: this.transitionDirection,
+       duration: 500,
+       slowdownfactor: 3,
+       slidePixels: 20,
+       iosdelay: 100,
+       androiddelay: 150,
+       fixedPixelsTop: 0,
+       fixedPixelsBottom: 60
+      };
    
-  //   this.nativePageTransitions.slide(options);
-  //     //.then(onSuccess)
-  //     //.catch(onError);
+    this.nativePageTransitions.slide(options);
+      //.then(onSuccess)
+      //.catch(onError);
    
-  //  }
+   }
 
 }

@@ -38,6 +38,7 @@ export class KnowledgeProvider {
     return new HttpParams()
     .set('limit', '10')
     .set('indent', 'true')
+    .set('languages', 'en')
     .set('key', 'AIzaSyB8Ycbavt2DwYtAr5ncWIzeN6hxAJCrAmw');
 }
 }
