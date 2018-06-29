@@ -10,6 +10,7 @@ import { HomePage } from '../pages/home/home';
 import { KnowledgeProvider } from '../providers/knowledge/knowledge';
 import { NativePageTransitions } from '@ionic-native/native-page-transitions';
 import { FullDescription } from '../pages/fulldescription/fulldescription';
+import { IonicStorageModule } from '@ionic/storage';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { FullDescription } from '../pages/fulldescription/fulldescription';
   imports: [
     BrowserModule,
     HttpClientModule,
-    IonicModule.forRoot(MyApp)
+    IonicModule.forRoot(MyApp),
+    IonicStorageModule.forRoot()
   ],
   bootstrap: [IonicApp],
   entryComponents: [
