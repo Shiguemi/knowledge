@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { NavController, NavParams } from 'ionic-angular';
+import { Component, ViewChild, OnInit } from '@angular/core';
+import { NavController, NavParams, AlertController, LoadingController, Loading } from 'ionic-angular';
 import { KnowledgeProvider } from '../../providers/knowledge/knowledge';
 import { Observable } from 'rxjs/Observable';
 import { NativePageTransitions, NativeTransitionOptions } from '@ionic-native/native-page-transitions';
@@ -19,15 +19,24 @@ export class HomePage {
   searchTerm: string;
   alertIsShown: boolean;
   transitionDirection: string;
+  @ViewChild('inputSearch') inputSearch;
+  itemsLoaded: number = 0;
+  itemsTotal: number;
+  loading: Loading;
 
   constructor(public navCtrl: NavController, 
       private provider: KnowledgeProvider, 
       private navParams: NavParams,
       private nativePageTransitions: NativePageTransitions,
+      private alertCtrl: AlertController,
+      private loadingCtrl: LoadingController,
       private storage: Storage) {
       // private nativePageTransitions: NativePageTransitions) {
     this.title = "Google's Knowledge Graph";
     this.alertIsShown = false;
+    this.loading = this.loadingCtrl.create({
+      content: 'loading...'
+    });
     if (this.navParams) {
       this.searchTerm = this.navParams.get('term');
     }
@@ -36,7 +45,7 @@ export class HomePage {
     } else {
       this.searchTerm = "Type to search... swipe to next search...";
     }
-  }
+}
 
   mySearch(term:string): void {
     this.mySubscribe(this.provider.search(term), term);
@@ -57,6 +66,8 @@ export class HomePage {
   }
 
   mySubscribe(observable: Observable<JSON>, term: string) {
+    // this.loading.present(); // some issue here, can't present many times.
+    this.itemsLoaded = 0;
     this.storage.get(term).then((response) => {
       console.log("Using cached response");
       this.updateResponse(response); // uses the cached search!
@@ -72,6 +83,7 @@ export class HomePage {
   updateResponse(response) {
     this.results = response['itemListElement'];
     var resultArray = response['itemListElement'];
+    this.itemsTotal = resultArray.length;
     resultArray.forEach(element => {
       var result = element['result'];
       if (!result['image']) {
@@ -81,11 +93,20 @@ export class HomePage {
     });
   }
 
-  userSwipe(event, term) {
-    console.log("event: " + event.offsetDirection);
-    console.log("term: " + term);
+  userSwipe(event, title, description) {
+    console.log("term: " + title);
     if (event.offsetDirection == 2) {
-      this.navCtrl.push(HomePage, {'term': term });
+      var toSearch = "";
+      if (title && title.length != 0) {
+        toSearch = title;
+      } else {
+        toSearch = description;
+      }
+      if (toSearch === this.searchTerm) {
+        this.showAlert('Same search:', toSearch);
+        return;
+      }
+      this.navCtrl.push(HomePage, {'term': toSearch});
       this.transitionDirection = 'left';
     }
     if (event.offsetDirection == 4) {
@@ -93,6 +114,29 @@ export class HomePage {
       if (this.navCtrl.canGoBack()) {
         this.navCtrl.pop();
       }
+    }
+  }
+
+  ionViewDidLoad() {
+    setTimeout(() => {
+      this.inputSearch.setFocus();
+    }, 150); // at least 150ms
+  }
+
+  showAlert(alertTitle, alertTerm) {
+    const alert = this.alertCtrl.create({
+      title: alertTitle,
+      subTitle: alertTerm,
+      buttons: ['Ok']
+    });
+    alert.present();
+  }
+
+  loadCompleted() {
+    this.itemsLoaded++;
+    if (this.itemsLoaded == this.itemsTotal) {
+      console.log("loadCompleted: " + this.itemsLoaded);
+      this.loading.dismiss();
     }
   }
 
@@ -107,12 +151,10 @@ export class HomePage {
   //      androiddelay: 150,
   //      fixedPixelsTop: 0,
   //      fixedPixelsBottom: 60
-  //     };
-   
+  //     };  
   //   this.nativePageTransitions.slide(options);
   //     //.then(onSuccess)
   //     //.catch(onError);
-   
   //  }
 
 }

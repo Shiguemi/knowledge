@@ -12,10 +12,10 @@
       <ion-input #inputSearch type="text" (keyup)="mySearch(inputSearch.value)"></ion-input>
   </ion-item>
   <ion-list>
-    <ion-item *ngFor="let item of results" (swipe)="userSwipe($event, item.result.name)" (click)="fullDescription(item.result['@id'])">
+    <ion-item *ngFor="let item of results" (swipe)="userSwipe($event, item.result.name, item.result.description)" (click)="fullDescription(item.result['@id'])">
     <!-- <ion-item *ngFor="let item of results"> -->
         <ion-thumbnail item-start>
-        <img [src]="item.result?.image?.contentUrl">
+        <img [src]="item.result?.image?.contentUrl"  (load)="loadCompleted()">
       </ion-thumbnail>
       <h2>{{item.result.name}}</h2>
       <p>{{item.result.description}}</p>
