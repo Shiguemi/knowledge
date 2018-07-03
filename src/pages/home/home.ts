@@ -29,7 +29,6 @@ export class HomePage {
       private alertCtrl: AlertController,
       private loadingCtrl: LoadingController,
       private storage: Storage) {
-      // private nativePageTransitions: NativePageTransitions) {
     this.title = "Google's Knowledge Graph";
     this.alertIsShown = false;
     this.loading = this.loadingCtrl.create({
@@ -64,7 +63,8 @@ export class HomePage {
   }
 
   mySubscribe(observable: Observable<JSON>, term: string) {
-    // this.loading.present(); // some issue here, can't present many times.
+    var spinner = document.getElementById("spinner") as HTMLElement;
+    spinner.innerHTML = '<ion-spinner name="dots"></ion-spinner>';
     this.itemsLoaded = 0;
     this.storage.get(term).then((response) => {
       console.log("Using cached response");
@@ -134,25 +134,9 @@ export class HomePage {
     this.itemsLoaded++;
     if (this.itemsLoaded == this.itemsTotal) {
       console.log("loadCompleted: " + this.itemsLoaded);
-      this.loading.dismiss();
+      var spinner = document.getElementById("spinner") as HTMLElement;
+      spinner.innerHTML = "";
     }
   }
-
-  // ionViewWillLeave() {
-
-  //   let options: NativeTransitionOptions = {
-  //      direction: this.transitionDirection,
-  //      duration: 500,
-  //      slowdownfactor: 3,
-  //      slidePixels: 20,
-  //      iosdelay: 100,
-  //      androiddelay: 150,
-  //      fixedPixelsTop: 0,
-  //      fixedPixelsBottom: 60
-  //     };  
-  //   this.nativePageTransitions.slide(options);
-  //     //.then(onSuccess)
-  //     //.catch(onError);
-  //  }
 
 }

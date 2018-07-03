@@ -29,9 +29,9 @@ export class FullDescription {
             this.mySubscribe(this.provider.searchId(this.id), this.id);
         }
         this.loading = this.loadingCtrl.create({
-            content: 'loading...'
+            content: '<div id="loading">loading...</div>'
         });
-        // this.loading.present();
+        this.loading.present();
     }
 
     
@@ -52,15 +52,10 @@ export class FullDescription {
         var resultArray = response['itemListElement'];
         resultArray.forEach(element => {
             var result = element['result'];
-            var fdI = document.getElementById("fulldescriptionImage") as HTMLDivElement;
             console.log(result);
             if (!result['image']) {
                 result['image'] = {};
-                result['image']['contentUrl'] = "assets/imgs/logo.png";
-                fdI.innerHTML = '<p>No image available</p>';
-                // this.loading.dismiss();
-            } else {
-                fdI.innerHTML = '<img src="' + result['image']['contentUrl'] + '" (load)="imageLoaded()"/>';
+                result['image']['contentUrl'] = "assets/imgs/noimage.png";
             }
             this.title = result['name'];
             if (!result['detailedDescription']) {
@@ -75,13 +70,11 @@ export class FullDescription {
         });
     }
 
-    // ionViewDidLoad() {
-    //     this.loading.dismiss();
-    // }
-
     imageLoaded() {
         console.log("Image loaded!");
-        this.loading.dismiss();
+        if (this.loading) {
+            this.loading.dismiss();
+        }
     }
 
     close() {
