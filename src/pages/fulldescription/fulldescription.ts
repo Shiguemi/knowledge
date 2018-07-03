@@ -31,7 +31,7 @@ export class FullDescription {
         this.loading = this.loadingCtrl.create({
             content: 'loading...'
         });
-        this.loading.present();
+        // this.loading.present();
     }
 
     
@@ -52,10 +52,15 @@ export class FullDescription {
         var resultArray = response['itemListElement'];
         resultArray.forEach(element => {
             var result = element['result'];
+            var fdI = document.getElementById("fulldescriptionImage") as HTMLDivElement;
             console.log(result);
             if (!result['image']) {
                 result['image'] = {};
                 result['image']['contentUrl'] = "assets/imgs/logo.png";
+                fdI.innerHTML = '<p>No image available</p>';
+                // this.loading.dismiss();
+            } else {
+                fdI.innerHTML = '<img src="' + result['image']['contentUrl'] + '" (load)="imageLoaded()"/>';
             }
             this.title = result['name'];
             if (!result['detailedDescription']) {

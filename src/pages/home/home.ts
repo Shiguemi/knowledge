@@ -1,8 +1,7 @@
-import { Component, ViewChild, OnInit } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { NavController, NavParams, AlertController, LoadingController, Loading } from 'ionic-angular';
 import { KnowledgeProvider } from '../../providers/knowledge/knowledge';
 import { Observable } from 'rxjs/Observable';
-import { NativePageTransitions, NativeTransitionOptions } from '@ionic-native/native-page-transitions';
 import { FullDescription } from '../fulldescription/fulldescription';
 import { Storage } from '@ionic/storage';
 
@@ -27,7 +26,6 @@ export class HomePage {
   constructor(public navCtrl: NavController, 
       private provider: KnowledgeProvider, 
       private navParams: NavParams,
-      private nativePageTransitions: NativePageTransitions,
       private alertCtrl: AlertController,
       private loadingCtrl: LoadingController,
       private storage: Storage) {
