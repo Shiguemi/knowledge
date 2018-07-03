@@ -10,8 +10,14 @@
                         <ion-card-title>
                         {{ title }}
                         </ion-card-title>
+                        <h2 color="secondary">
+                            {{ description }}
+                        </h2>
                         <p>
                             {{ detailedDescription }}
+                        </p>
+                        <p>
+                            <ion-badge *ngFor="let type of types" style="margin-right: 2px; margin-left: 2px;">{{ type }}</ion-badge>
                         </p>
                         <!-- <a href="{{ wikipediaUrl }}">Wikipedia</a> -->
                     </ion-card-content>

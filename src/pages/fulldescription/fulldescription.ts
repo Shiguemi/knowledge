@@ -16,6 +16,8 @@ export class FullDescription {
     imageUrl: string;
     wikipediaUrl: string;
     loading: Loading;
+    types: any;
+    description: string;
 
     constructor(public navCtrl: NavController,       
         private provider: KnowledgeProvider, 
@@ -65,8 +67,12 @@ export class FullDescription {
                 result['detailedDescription']['contentUrl'] = "";
             }
             this.detailedDescription = result['detailedDescription']['articleBody'];
+            this.description = result['description'];
             this.wikipediaUrl = result['detailedDescription']['url'];
             this.imageUrl = result['image']['contentUrl'];
+            if (result['@type']) {
+                this.types = result['@type'];
+            }
         });
     }
 
