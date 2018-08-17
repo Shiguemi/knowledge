@@ -22,6 +22,10 @@ export class HomePage {
   itemsLoaded: number = 0;
   itemsTotal: number;
   loading: Loading;
+  searchSequence: number = 0;
+  lastSearch: number = 0;
+  types: Array<string> = [];
+  selectedtypes: Array<string> = [];
 
   constructor(public navCtrl: NavController, 
       private provider: KnowledgeProvider, 
@@ -31,6 +35,7 @@ export class HomePage {
       private storage: Storage) {
     this.title = "Google's Knowledge Graph";
     this.alertIsShown = false;
+    this.storage.clear();
     this.loading = this.loadingCtrl.create({
       content: 'loading...'
     });
@@ -38,14 +43,16 @@ export class HomePage {
       this.searchTerm = this.navParams.get('term');
     }
     if (this.searchTerm && this.searchTerm != '') {
-      this.mySubscribe(this.provider.search(this.searchTerm), this.searchTerm);
+      this.searchSequence++;
+      this.mySubscribe(this.provider.search(this.searchTerm), this.searchTerm, this.searchSequence);
     } else {
       this.searchTerm = "Type to search... swipe to next search...";
     }
 }
 
   mySearch(term:string): void {
-    this.mySubscribe(this.provider.search(term), term);
+    this.searchSequence++;
+    this.mySubscribe(this.provider.search(term), term, this.searchSequence);
   }
 
   mySearchNew(term: string): void {
@@ -54,7 +61,20 @@ export class HomePage {
 
   mySearchId(id:string): void {
     id = id.split(':')[1]
-    this.mySubscribe(this.provider.searchId(id), id);
+    this.searchSequence++;
+    this.mySubscribe(this.provider.searchId(id), id, this.searchSequence);
+  }
+
+  typeSelect(type: string) {
+    var button = document.getElementById(type) as HTMLElement;
+    var index = this.selectedtypes.indexOf(type);
+    if (index == -1) {
+      this.selectedtypes.push(type);
+      button.color = "gray";
+    } else {
+      this.selectedtypes.splice(index, 1);
+      button.color = "default";
+    }
   }
 
   fullDescription(id: string): void {
@@ -62,19 +82,35 @@ export class HomePage {
     this.navCtrl.push(FullDescription, {'id': id});
   }
 
-  mySubscribe(observable: Observable<JSON>, term: string) {
+  mySubscribe(observable: Observable<JSON>, term: string, searchSequence: number) {
     var spinner = document.getElementById("spinner") as HTMLElement;
     spinner.innerHTML = '<ion-spinner name="dots"></ion-spinner>';
     this.itemsLoaded = 0;
     this.storage.get(term).then((response) => {
+      if (response != null) {
       console.log("Using cached response");
+        if (searchSequence > this.lastSearch) {
       this.updateResponse(response); // uses the cached search!
+          this.lastSearch = searchSequence;
+        }  
+      } else {
+        this.doNewSearch(observable, term, searchSequence);
+      }
     })
     .catch((err) => {
+      this.doNewSearch(observable, term, searchSequence);
+    });
+  }
+
+  doNewSearch(observable: Observable<JSON>, term: string, searchSequence: number): void {
       observable.subscribe((response) => {
-        this.storage.set(term, response); // caches everything!
+      if (response['itemListElement'].length > 0) {
+        this.storage.set(term, response); // caches only not empty responses
+      }
+      if (searchSequence > this.lastSearch) {
         this.updateResponse(response);
-      });  
+        this.lastSearch = searchSequence;
+      }
     });
   }
 
@@ -87,6 +123,13 @@ export class HomePage {
       if (!result['image']) {
         result['image'] = {};
         result['image']['contentUrl'] = "assets/imgs/logo.png";
+      }
+      if (result['@type']) {
+        result['@type'].forEach(element => {
+          if (this.types.indexOf(element) == -1) {
+            this.types.push(element);
+          }
+        })
       }
     });
   }

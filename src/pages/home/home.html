@@ -11,6 +11,10 @@
       <ion-label floating>{{ searchTerm }}</ion-label>
       <ion-input #inputSearch type="text" (keyup)="mySearch(inputSearch.value)"></ion-input>
   </ion-item>
+  <p>
+    <!-- <ion-badge *ngFor="let type of types" style="margin-right: 2px; margin-left: 2px;">{{ type }}</ion-badge> -->
+    <button *ngFor="let type of types" ion-button small id="{{type}}" (click)="typeSelect(type)">{{type}}</button>
+  </p>
   <ion-list>
     <ion-item *ngFor="let item of results" (swipe)="userSwipe($event, item.result.name, item.result.description)" (click)="fullDescription(item.result['@id'])">
     <!-- <ion-item *ngFor="let item of results"> -->
