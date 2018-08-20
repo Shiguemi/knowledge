@@ -11,7 +11,6 @@ import { Storage } from '@ionic/storage';
 })
 
 export class HomePage {
-
   title: string;
   results: JSON;
   myResults: Array<any> = [{}];
@@ -65,16 +64,28 @@ export class HomePage {
     this.mySubscribe(this.provider.searchId(id), id, this.searchSequence);
   }
 
-  typeSelect(type: string) {
+  mySearchTypes(term: string, types: Array<string>): void {
+    var spinner = document.getElementById("spinner") as HTMLElement;
+    spinner.innerHTML = '<ion-spinner name="dots"></ion-spinner>';
+    this.itemsLoaded = 0;
+    this.doNewSearch(this.provider.searchTypes(term, types), term, this.searchSequence);
+  }
+
+  typeSelect(term: string, type: string) {
     var button = document.getElementById(type) as HTMLElement;
     var index = this.selectedtypes.indexOf(type);
     if (index == -1) {
       this.selectedtypes.push(type);
-      button.color = "gray";
+      button.style.backgroundColor = "blue";
     } else {
       this.selectedtypes.splice(index, 1);
-      button.color = "default";
+      button.style.backgroundColor = "gray";
     }
+    this.searchSequence++;
+    if (term == null || term == "") {
+      term = this.searchTerm;
+    }
+    this.mySearchTypes(term, this.selectedtypes);
   }
 
   fullDescription(id: string): void {
@@ -88,9 +99,9 @@ export class HomePage {
     this.itemsLoaded = 0;
     this.storage.get(term).then((response) => {
       if (response != null) {
-      console.log("Using cached response");
+        console.log("Using cached response");
         if (searchSequence > this.lastSearch) {
-      this.updateResponse(response); // uses the cached search!
+          this.updateResponse(response); // uses the cached search!
           this.lastSearch = searchSequence;
         }  
       } else {
@@ -103,7 +114,7 @@ export class HomePage {
   }
 
   doNewSearch(observable: Observable<JSON>, term: string, searchSequence: number): void {
-      observable.subscribe((response) => {
+    observable.subscribe((response) => {
       if (response['itemListElement'].length > 0) {
         this.storage.set(term, response); // caches only not empty responses
       }
@@ -138,6 +149,7 @@ export class HomePage {
     console.log("term: " + title);
     if (event.offsetDirection == 2) {
       var toSearch = "";
+      this.selectedtypes = [];
       if (title && title.length != 0) {
         toSearch = title;
       } else {

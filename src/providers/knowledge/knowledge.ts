@@ -11,6 +11,22 @@ import { Observable } from 'rxjs/Observable';
 @Injectable()
 export class KnowledgeProvider {
 
+  searchTypes(term: string, types: Array<string>): Observable<any> {
+    var params = this.buildHttpParams()
+      .set('query', term);
+    var count = 0;
+    types.forEach(element => {
+      if (count == 0) {
+        params = params.set('types', element);
+      } else {
+        params = params.append('types', element);
+      }
+      count++;
+    });
+    console.log("Params: " + params.toString());
+    return this.searchAll(params)
+  }
+
   constructor(public http: HttpClient) {
     console.log('Hello KnowledgeProvider Provider');
   }
